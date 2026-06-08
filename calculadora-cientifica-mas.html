@@ -21,38 +21,14 @@
       padding: 24px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.10);
     }
-    h1 {
-      font-size: 14px;
-      font-weight: 500;
-      color: #888;
-      text-align: center;
-      margin-bottom: 16px;
-      letter-spacing: 0.05em;
-    }
-    .display {
-      background: #f5f5f0;
-      border: 1px solid #e0e0d8;
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 12px;
-      text-align: right;
-    }
+    h1 { font-size: 14px; font-weight: 500; color: #888; text-align: center; margin-bottom: 16px; letter-spacing: 0.05em; }
+    .display { background: #f5f5f0; border: 1px solid #e0e0d8; border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; text-align: right; }
     .expr { font-size: 13px; color: #aaa; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .result { font-size: 32px; font-weight: 500; color: #1a1a1a; min-height: 40px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .grid { display: grid; gap: 6px; margin-bottom: 6px; }
     .g5 { grid-template-columns: repeat(5, 1fr); }
     .g4 { grid-template-columns: repeat(4, 1fr); }
-    .btn {
-      padding: 11px 4px;
-      border: 1px solid #e0e0d8;
-      border-radius: 8px;
-      background: #ffffff;
-      color: #1a1a1a;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.12s;
-      font-family: 'Courier New', monospace;
-    }
+    .btn { padding: 11px 4px; border: 1px solid #e0e0d8; border-radius: 8px; background: #ffffff; color: #1a1a1a; font-size: 13px; cursor: pointer; transition: background 0.12s; font-family: 'Courier New', monospace; }
     .btn:hover { background: #f5f5f0; }
     .btn:active { transform: scale(0.97); }
     .btn-op { background: #f5f5f0; font-weight: 500; }
@@ -60,14 +36,21 @@
     .btn-eq:hover { background: #27500A; }
     .btn-clr { background: #fff0f0; color: #c0392b; border-color: #f5c6c6; }
     .btn-fn { font-size: 11px; color: #555; }
-    .section-label {
-      font-size: 10px;
-      color: #bbb;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 6px 0 3px;
-    }
+    .section-label { font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 0.08em; margin: 6px 0 3px; }
     .divider { border: none; border-top: 1px solid #f0f0e8; margin: 6px 0; }
+    .hint { margin-top: 10px; font-size: 10px; color: #bbb; text-align: center; line-height: 1.7; }
+    .mem-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+    .mem-slot { border: 1px solid #e0e0d8; border-radius: 8px; padding: 6px 8px; display: flex; align-items: center; justify-content: space-between; gap: 4px; background: #fafaf7; }
+    .mem-label { font-size: 10px; color: #aaa; font-weight: 500; letter-spacing: 0.05em; min-width: 20px; }
+    .mem-val { font-size: 13px; color: #1a1a1a; flex: 1; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mem-val.empty { color: #ccc; }
+    .mem-actions { display: flex; gap: 3px; }
+    .btn-mem { padding: 3px 6px; font-size: 10px; border: 1px solid #e0e0d8; border-radius: 5px; cursor: pointer; background: #fff; color: #555; font-family: 'Courier New', monospace; transition: background 0.1s; }
+    .btn-mem:hover { background: #f0f0e8; }
+    .btn-mem.store { border-color: #3B6D11; color: #3B6D11; }
+    .btn-mem.store:hover { background: #EAF3DE; }
+    .btn-mem.clear { border-color: #e0a0a0; color: #c0392b; }
+    .btn-mem.clear:hover { background: #fff0f0; }
   </style>
 </head>
 <body>
@@ -78,7 +61,28 @@
     <div class="result" id="result">0</div>
   </div>
 
-  <!-- Trigonometría -->
+  <div class="section-label">Memoria</div>
+  <div class="mem-panel">
+    <div class="mem-slot">
+      <span class="mem-label">M1</span>
+      <span class="mem-val empty" id="m1-val">vacío</span>
+      <div class="mem-actions">
+        <button class="btn-mem store" onclick="memStore(1)" title="Guardar en M1">MS</button>
+        <button class="btn-mem" onclick="memRecall(1)" title="Usar M1">MR</button>
+        <button class="btn-mem clear" onclick="memClear(1)" title="Limpiar M1">MC</button>
+      </div>
+    </div>
+    <div class="mem-slot">
+      <span class="mem-label">M2</span>
+      <span class="mem-val empty" id="m2-val">vacío</span>
+      <div class="mem-actions">
+        <button class="btn-mem store" onclick="memStore(2)" title="Guardar en M2">MS</button>
+        <button class="btn-mem" onclick="memRecall(2)" title="Usar M2">MR</button>
+        <button class="btn-mem clear" onclick="memClear(2)" title="Limpiar M2">MC</button>
+      </div>
+    </div>
+  </div>
+
   <div class="section-label">Trigonometría</div>
   <div class="grid g5">
     <button class="btn btn-fn" onclick="fn('sin(')">sin</button>
@@ -93,17 +97,15 @@
     <button class="btn btn-fn" onclick="fn('Math.PI')">π</button>
   </div>
 
-  <!-- Potencias y raíces -->
   <div class="section-label">Potencias y raíces</div>
   <div class="grid g5">
     <button class="btn btn-fn" onclick="fn('^')">xʸ</button>
     <button class="btn btn-fn" onclick="fn('sqrt(')">√x</button>
     <button class="btn btn-fn" onclick="fn('cbrt(')">∛x</button>
-    <button class="btn btn-fn" onclick="fn('nroot(')">ʸ√x</button>
-    <button class="btn btn-fn" onclick="fn('inv(')">1/x</button>
+    <button class="btn btn-fn" onclick="wrapLast('nroot(')">ʸ√x</button>
+    <button class="btn btn-fn" onclick="wrapLast('inv(')">1/x</button>
   </div>
 
-  <!-- Logaritmos y combinatoria -->
   <div class="section-label">Logaritmos · Combinatoria</div>
   <div class="grid g5">
     <button class="btn btn-fn" onclick="fn('log(')">log</button>
@@ -111,8 +113,8 @@
     <button class="btn btn-fn" onclick="fn('Math.E')">e</button>
     <button class="btn btn-fn" onclick="fn('fact(')">n!</button>
     <button class="btn btn-fn" onclick="fn('abs(')">|x|</button>
-    <button class="btn btn-fn" onclick="fn('perm(')">nPr</button>
-    <button class="btn btn-fn" onclick="fn('comb(')">nCr</button>
+    <button class="btn btn-fn" onclick="wrapLast('perm(')">nPr</button>
+    <button class="btn btn-fn" onclick="wrapLast('comb(')">nCr</button>
     <button class="btn btn-fn" onclick="fn('(')">( </button>
     <button class="btn btn-fn" onclick="fn(')')"> )</button>
     <button class="btn btn-fn" onclick="fn('%')">%</button>
@@ -120,7 +122,6 @@
 
   <hr class="divider">
 
-  <!-- Fila AC/borrar/operadores -->
   <div class="grid g4">
     <button class="btn btn-clr" onclick="allClear()">AC</button>
     <button class="btn btn-op" onclick="del()">⌫</button>
@@ -128,7 +129,6 @@
     <button class="btn btn-op" onclick="fn('/')">÷</button>
   </div>
 
-  <!-- Números -->
   <div class="grid g4">
     <button class="btn" onclick="fn('7')">7</button>
     <button class="btn" onclick="fn('8')">8</button>
@@ -142,46 +142,110 @@
     <button class="btn" onclick="fn('2')">2</button>
     <button class="btn" onclick="fn('3')">3</button>
     <button class="btn btn-op" onclick="fn('+')">+</button>
-    <button class="btn btn-fn" onclick="fn('EE(')">EE</button>
+    <button class="btn btn-fn" onclick="fn(',')"> , </button>
     <button class="btn" onclick="fn('0')">0</button>
     <button class="btn" onclick="fn('.')">.</button>
     <button class="btn btn-eq" onclick="calc()">=</button>
   </div>
 
-  <!-- Ayuda rápida -->
-  <div style="margin-top:10px;font-size:10px;color:#bbb;text-align:center;line-height:1.6">
-    ʸ√x → escribe y primero, luego ʸ√x &nbsp;|&nbsp; nPr / nCr → escribe n primero, luego nPr o nCr
+  <div class="hint">
+    ʸ√x → escribe el índice (ej: 4), presiona ʸ√x, escribe el número, cierra )<br>
+    nPr / nCr → escribe n (ej: 10), presiona nPr, escribe r, cierra )
   </div>
 </div>
 
 <script>
   let expr = '';
+  let justCalc = false;
+  const mem = { 1: null, 2: null };
   const exprEl = document.getElementById('expr');
   const resultEl = document.getElementById('result');
 
-  // ── Funciones matemáticas ──────────────────────────────────────────────────
+  function memStore(slot) {
+    const val = parseFloat(resultEl.textContent);
+    if (isNaN(val)) return;
+    mem[slot] = val;
+    const el = document.getElementById('m' + slot + '-val');
+    el.textContent = fmt(val);
+    el.classList.remove('empty');
+  }
+
+  function memRecall(slot) {
+    if (mem[slot] === null) return;
+    const v = String(mem[slot]);
+    if (justCalc) { expr = ''; justCalc = false; }
+    expr += v;
+    exprEl.textContent = display(expr);
+    resultEl.textContent = liveEval(expr);
+  }
+
+  function memClear(slot) {
+    mem[slot] = null;
+    const el = document.getElementById('m' + slot + '-val');
+    el.textContent = 'vacío';
+    el.classList.add('empty');
+  }
+
   function fact(n) {
     if (n < 0 || !Number.isInteger(n)) return NaN;
     if (n === 0 || n === 1) return 1;
     let r = 1; for (let i = 2; i <= n; i++) r *= i; return r;
   }
   function perm(n, r) {
-    if (!Number.isInteger(n) || !Number.isInteger(r) || r > n || n < 0 || r < 0) return NaN;
+    if (!Number.isInteger(n)||!Number.isInteger(r)||r>n||n<0||r<0) return NaN;
     return fact(n) / fact(n - r);
   }
   function comb(n, r) {
-    if (!Number.isInteger(n) || !Number.isInteger(r) || r > n || n < 0 || r < 0) return NaN;
+    if (!Number.isInteger(n)||!Number.isInteger(r)||r>n||n<0||r<0) return NaN;
     return fact(n) / (fact(r) * fact(n - r));
   }
   function nroot(y, x) { return Math.pow(x, 1 / y); }
-  function inv(x)  { return 1 / x; }
-  function EE(n)   { return Math.pow(10, n); }
+  function inv(x) { return 1 / x; }
 
-  // ── Input ──────────────────────────────────────────────────────────────────
+  // Extrae el último número o expresión entre paréntesis del final de expr
+  function extractLast() {
+    // Intenta capturar número decimal o entero al final
+    const m = expr.match(/(-?[\d.]+)$/);
+    if (m) return m[1];
+    return null;
+  }
+
+  // Para botones de dos argumentos: envuelve el último número como primer arg
+  // Ej: expr="10" + wrapLast('perm(') → expr="perm(10,"
+  function wrapLast(fname) {
+    const last = extractLast();
+    if (last !== null) {
+      // Reemplaza el número al final por fname(numero,
+      expr = expr.slice(0, expr.length - last.length) + fname + last + ',';
+    } else {
+      // No hay número previo, solo abre la función
+      expr += fname;
+    }
+    exprEl.textContent = display(expr);
+    resultEl.textContent = liveEval(expr);
+  }
+
+  const OPERATORS = ['+', '-', '*', '/', '^', '%', ','];
+  const FUNCTIONS = ['sin(', 'cos(', 'tan(', 'asin(', 'acos(', 'atan(',
+                     'sinh(', 'cosh(', 'tanh(', 'sqrt(', 'cbrt(', 'log(',
+                     'ln(', 'abs(', 'fact(', 'Math.PI', 'Math.E', '('];
+
   function fn(v) {
+    if (justCalc) {
+      // Si el usuario escribe un número o función nueva → borra el resultado y empieza fresco
+      // Si escribe un operador → continúa desde el resultado anterior
+      const isOp = OPERATORS.includes(v);
+      const isFn = FUNCTIONS.includes(v);
+      if (!isOp && !isFn) {
+        expr = '';  // empieza cálculo nuevo
+      }
+      // si es operador o función, expr ya tiene el resultado anterior → continúa
+      justCalc = false;
+    }
+
     if (v === '+/-') {
       if (expr === '') return;
-      const m = expr.match(/(-?\d+\.?\d*)$/);
+      const m = expr.match(/(-?[\d.]+)$/);
       if (m) {
         const num = m[1];
         expr = expr.slice(0, -num.length) + (num.startsWith('-') ? num.slice(1) : '-' + num);
@@ -193,46 +257,36 @@
     resultEl.textContent = liveEval(expr);
   }
 
-  // ── Display ────────────────────────────────────────────────────────────────
   function display(e) {
     return e
       .replace(/Math\.PI/g, 'π').replace(/Math\.E/g, 'e')
       .replace(/\*/g, '×').replace(/\//g, '÷')
       .replace(/sqrt\(/g, '√(').replace(/cbrt\(/g, '∛(')
-      .replace(/nroot\(/g, 'ʸ√(').replace(/inv\(/g, '1/(')
+      .replace(/nroot\(/g, 'ʸ√(').replace(/inv\(/g, '1∕(')
       .replace(/fact\(/g, 'n!(').replace(/perm\(/g, 'nPr(')
-      .replace(/comb\(/g, 'nCr(').replace(/abs\(/g, '|')
-      .replace(/log\(/g, 'log(').replace(/ln\(/g, 'ln(')
+      .replace(/comb\(/g, 'nCr(').replace(/abs\(/g, '|(')
       .replace(/sinh\(/g, 'sinh(').replace(/cosh\(/g, 'cosh(').replace(/tanh\(/g, 'tanh(')
       .replace(/asin\(/g, 'sin⁻¹(').replace(/acos\(/g, 'cos⁻¹(').replace(/atan\(/g, 'tan⁻¹(')
-      .replace(/EE\(/g, '×10^(').replace(/\^/g, '^');
+      .replace(/\^/g, '^');
   }
 
-  // ── Evaluación ────────────────────────────────────────────────────────────
   function safeEval(e) {
     let s = e;
     s = s.replace(/\^/g, '**');
-    s = s.replace(/(?<![a-z])sin\(/gi, 'Math.sin(')
-         .replace(/(?<![a-z])cos\(/gi, 'Math.cos(')
-         .replace(/(?<![a-z])tan\(/gi, 'Math.tan(');
-    s = s.replace(/asin\(/g, 'Math.asin(')
-         .replace(/acos\(/g, 'Math.acos(')
-         .replace(/atan\(/g, 'Math.atan(');
-    s = s.replace(/sinh\(/g, 'Math.sinh(')
-         .replace(/cosh\(/g, 'Math.cosh(')
-         .replace(/tanh\(/g, 'Math.tanh(');
-    s = s.replace(/sqrt\(/g, 'Math.sqrt(')
-         .replace(/cbrt\(/g, 'Math.cbrt(')
-         .replace(/log\(/g, 'Math.log10(')
-         .replace(/ln\(/g, 'Math.log(')
-         .replace(/abs\(/g, 'Math.abs(');
-    s = s.replace(/fact\(/g, 'fact(')
-         .replace(/perm\(/g, 'perm(')
-         .replace(/comb\(/g, 'comb(')
-         .replace(/nroot\(/g, 'nroot(')
-         .replace(/inv\(/g, 'inv(')
-         .replace(/EE\(/g, 'EE(');
-    const helpers = [fact, perm, comb, nroot, inv, EE].map(f => `const ${f.name}=${f.toString()};`).join('');
+    // Trig (cuidado con el orden para no pisar asin/acos/atan)
+    s = s.replace(/asin\(/g, 'Math.asin(').replace(/acos\(/g, 'Math.acos(').replace(/atan\(/g, 'Math.atan(');
+    s = s.replace(/sinh\(/g, 'Math.sinh(').replace(/cosh\(/g, 'Math.cosh(').replace(/tanh\(/g, 'Math.tanh(');
+    s = s.replace(/sin\(/g, 'Math.sin(').replace(/cos\(/g, 'Math.cos(').replace(/tan\(/g, 'Math.tan(');
+    s = s.replace(/sqrt\(/g, 'Math.sqrt(').replace(/cbrt\(/g, 'Math.cbrt(');
+    s = s.replace(/log\(/g, 'Math.log10(').replace(/ln\(/g, 'Math.log(');
+    s = s.replace(/abs\(/g, 'Math.abs(');
+    const helpers = `
+      const fact=${fact.toString()};
+      const perm=${perm.toString()};
+      const comb=${comb.toString()};
+      const nroot=${nroot.toString()};
+      const inv=${inv.toString()};
+    `;
     return Function(`"use strict";${helpers}return (${s})`)();
   }
 
@@ -250,9 +304,11 @@
       exprEl.textContent = display(expr) + ' =';
       resultEl.textContent = fmt(r);
       expr = String(r);
+      justCalc = true;
     } catch(ex) {
       resultEl.textContent = 'Error';
       expr = '';
+      justCalc = false;
     }
   }
 
@@ -262,8 +318,9 @@
     return String(parseFloat(n.toPrecision(12)));
   }
 
-  function allClear() { expr = ''; exprEl.textContent = ''; resultEl.textContent = '0'; }
+  function allClear() { expr = ''; justCalc = false; exprEl.textContent = ''; resultEl.textContent = '0'; }
   function del() {
+    if (justCalc) { allClear(); return; }
     expr = expr.slice(0, -1);
     exprEl.textContent = display(expr);
     resultEl.textContent = liveEval(expr) || '0';
