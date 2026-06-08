@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Científica</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f5f0;
+      font-family: 'Courier New', monospace;
+    }
+    .calc {
+      width: 360px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    }
+    h1 {
+      font-size: 14px;
+      font-weight: 500;
+      color: #888;
+      text-align: center;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+    .display {
+      background: #f5f5f0;
+      border: 1px solid #e0e0d8;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      text-align: right;
+    }
+    .expr {
+      font-size: 13px;
+      color: #aaa;
+      min-height: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .result {
+      font-size: 32px;
+      font-weight: 500;
+      color: #1a1a1a;
+      min-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .grid { display: grid; gap: 7px; }
+    .g5 { grid-template-columns: repeat(5, 1fr); }
+    .g4 { grid-template-columns: repeat(4, 1fr); }
+    .btn {
+      padding: 12px 4px;
+      border: 1px solid #e0e0d8;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #1a1a1a;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.12s;
+      font-family: 'Courier New', monospace;
+    }
+    .btn:hover { background: #f5f5f0; }
+    .btn:active { transform: scale(0.97); }
+    .btn-op { background: #f5f5f0; font-weight: 500; }
+    .btn-eq {
+      background: #3B6D11;
+      color: #EAF3DE;
+      border-color: #3B6D11;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .btn-eq:hover { background: #27500A; }
+    .btn-clr { background: #fff0f0; color: #c0392b; border-color: #f5c6c6; }
+    .btn-fn { font-size: 12px; color: #555; }
+    .sep { height: 6px; }
+  </style>
+</head>
+<body>
+  <div class="calc">
+    <h1>Calculadora Científica</h1>
+    <div class="display">
+      <div class="expr" id="expr"></div>
+      <div class="result" id="result">0</div>
+    </div>
+
+    <div class="grid g5" style="margin-bottom:7px">
+      <button class="btn btn-fn" onclick="fn('sin(')">sin</button>
+      <button class="btn btn-fn" onclick="fn('cos(')">cos</button>
+      <button class="btn btn-fn" onclick="fn('tan(')">tan</button>
+      <button class="btn btn-fn" onclick="fn('log(')">log</button>
+      <button class="btn btn-fn" onclick="fn('ln(')">ln</button>
+      <button class="btn btn-fn" onclick="fn('asin(')">sin⁻¹</button>
+      <button class="btn btn-fn" onclick="fn('acos(')">cos⁻¹</button>
+      <button class="btn btn-fn" onclick="fn('atan(')">tan⁻¹</button>
+      <button class="btn btn-fn" onclick="fn('sqrt(')">√</button>
+      <button class="btn btn-fn" onclick="fn('^')">xʸ</button>
+      <button class="btn btn-fn" onclick="fn('(')">( </button>
+      <button class="btn btn-fn" onclick="fn(')')"> )</button>
+      <button class="btn btn-fn" onclick="fn('Math.PI')">π</button>
+      <button class="btn btn-fn" onclick="fn('Math.E')">e</button>
+      <button class="btn btn-fn" onclick="fn('fact(')">n!</button>
+    </div>
+
+    <div class="grid g4" style="margin-bottom:7px">
+      <button class="btn btn-clr" onclick="allClear()">AC</button>
+      <button class="btn btn-op" onclick="del()">⌫</button>
+      <button class="btn btn-op" onclick="fn('%')">%</button>
+      <button class="btn btn-op" onclick="fn('/')">÷</button>
+    </div>
+
+    <div class="grid g4">
+      <button class="btn" onclick="fn('7')">7</button>
+      <button class="btn" onclick="fn('8')">8</button>
+      <button class="btn" onclick="fn('9')">9</button>
+      <button class="btn btn-op" onclick="fn('*')">×</button>
+      <button class="btn" onclick="fn('4')">4</button>
+      <button class="btn" onclick="fn('5')">5</button>
+      <button class="btn" onclick="fn('6')">6</button>
+      <button class="btn btn-op" onclick="fn('-')">−</button>
+      <button class="btn" onclick="fn('1')">1</button>
+      <button class="btn" onclick="fn('2')">2</button>
+      <button class="btn" onclick="fn('3')">3</button>
+      <button class="btn btn-op" onclick="fn('+')">+</button>
+      <button class="btn btn-fn" onclick="fn('+/-')">+/−</button>
+      <button class="btn" onclick="fn('0')">0</button>
+      <button class="btn" onclick="fn('.')">.</button>
+      <button class="btn btn-eq" onclick="calc()">=</button>
+    </div>
+  </div>
+
+  <script>
+    let expr = '';
+    const exprEl = document.getElementById('expr');
+    const resultEl = document.getElementById('result');
+
+    function fact(n) {
+      if (n < 0 || !Number.isInteger(n)) return NaN;
+      if (n === 0 || n === 1) return 1;
+      let r = 1; for (let i = 2; i <= n; i++) r *= i; return r;
+    }
+
+    function fn(v) {
+      if (v === '+/-') {
+        if (expr === '') return;
+        const m = expr.match(/(-?\d+\.?\d*)$/);
+        if (m) {
+          const num = m[1];
+          expr = expr.slice(0, -num.length) + (num.startsWith('-') ? num.slice(1) : '-' + num);
+        }
+      } else {
+        expr += v;
+      }
+      exprEl.textContent = display(expr);
+      resultEl.textContent = liveEval(expr);
+    }
+
+    function display(e) {
+      return e.replace(/Math\.PI/g,'π').replace(/Math\.E/g,'e')
+               .replace(/\*/g,'×').replace(/\//g,'÷')
+               .replace(/sqrt\(/g,'√(').replace(/fact\(/g,'n!(')
+               .replace(/log\(/g,'log(').replace(/ln\(/g,'ln(')
+               .replace(/asin\(/g,'sin⁻¹(').replace(/acos\(/g,'cos⁻¹(')
+               .replace(/atan\(/g,'tan⁻¹(').replace(/\^/g,'^');
+    }
+
+    function liveEval(e) {
+      try {
+        const r = safeEval(e);
+        if (r === undefined || r === null || isNaN(r)) return '';
+        return fmt(r);
+      } catch(ex) { return ''; }
+    }
+
+    function safeEval(e) {
+      let s = e;
+      s = s.replace(/\^/g,'**');
+      s = s.replace(/sin\(/g,'Math.sin(').replace(/cos\(/g,'Math.cos(').replace(/tan\(/g,'Math.tan(');
+      s = s.replace(/asin\(/g,'Math.asin(').replace(/acos\(/g,'Math.acos(').replace(/atan\(/g,'Math.atan(');
+      s = s.replace(/sqrt\(/g,'Math.sqrt(').replace(/log\(/g,'Math.log10(').replace(/ln\(/g,'Math.log(').replace(/fact\(/g,'fact(');
+      return Function('"use strict";const fact='+fact.toString()+';return ('+s+')')();
+    }
+
+    function calc() {
+      try {
+        const r = safeEval(expr);
+        exprEl.textContent = display(expr) + '=';
+        resultEl.textContent = fmt(r);
+        expr = String(r);
+      } catch(ex) {
+        resultEl.textContent = 'Error';
+        expr = '';
+      }
+    }
+
+    function fmt(n) {
+      if (!isFinite(n)) return n > 0 ? '∞' : '-∞';
+      if (Math.abs(n) >= 1e12 || (Math.abs(n) < 1e-7 && n !== 0)) return n.toExponential(6);
+      return String(parseFloat(n.toPrecision(12)));
+    }
+
+    function allClear() { expr = ''; exprEl.textContent = ''; resultEl.textContent = '0'; }
+    function del() { expr = expr.slice(0,-1); exprEl.textContent = display(expr); resultEl.textContent = liveEval(expr) || '0'; }
+  </script>
+</body>
+</html>
