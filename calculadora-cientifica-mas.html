@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Científica</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f5f0;
+      font-family: 'Courier New', monospace;
+    }
+    .calc {
+      width: 400px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    }
+    h1 {
+      font-size: 14px;
+      font-weight: 500;
+      color: #888;
+      text-align: center;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+    .display {
+      background: #f5f5f0;
+      border: 1px solid #e0e0d8;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      text-align: right;
+    }
+    .expr { font-size: 13px; color: #aaa; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .result { font-size: 32px; font-weight: 500; color: #1a1a1a; min-height: 40px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .grid { display: grid; gap: 6px; margin-bottom: 6px; }
+    .g5 { grid-template-columns: repeat(5, 1fr); }
+    .g4 { grid-template-columns: repeat(4, 1fr); }
+    .btn {
+      padding: 11px 4px;
+      border: 1px solid #e0e0d8;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #1a1a1a;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.12s;
+      font-family: 'Courier New', monospace;
+    }
+    .btn:hover { background: #f5f5f0; }
+    .btn:active { transform: scale(0.97); }
+    .btn-op { background: #f5f5f0; font-weight: 500; }
+    .btn-eq { background: #3B6D11; color: #EAF3DE; border-color: #3B6D11; font-size: 18px; font-weight: 500; }
+    .btn-eq:hover { background: #27500A; }
+    .btn-clr { background: #fff0f0; color: #c0392b; border-color: #f5c6c6; }
+    .btn-fn { font-size: 11px; color: #555; }
+    .section-label {
+      font-size: 10px;
+      color: #bbb;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 6px 0 3px;
+    }
+    .divider { border: none; border-top: 1px solid #f0f0e8; margin: 6px 0; }
+  </style>
+</head>
+<body>
+<div class="calc">
+  <h1>Calculadora Científica</h1>
+  <div class="display">
+    <div class="expr" id="expr"></div>
+    <div class="result" id="result">0</div>
+  </div>
+
+  <!-- Trigonometría -->
+  <div class="section-label">Trigonometría</div>
+  <div class="grid g5">
+    <button class="btn btn-fn" onclick="fn('sin(')">sin</button>
+    <button class="btn btn-fn" onclick="fn('cos(')">cos</button>
+    <button class="btn btn-fn" onclick="fn('tan(')">tan</button>
+    <button class="btn btn-fn" onclick="fn('asin(')">sin⁻¹</button>
+    <button class="btn btn-fn" onclick="fn('acos(')">cos⁻¹</button>
+    <button class="btn btn-fn" onclick="fn('atan(')">tan⁻¹</button>
+    <button class="btn btn-fn" onclick="fn('sinh(')">sinh</button>
+    <button class="btn btn-fn" onclick="fn('cosh(')">cosh</button>
+    <button class="btn btn-fn" onclick="fn('tanh(')">tanh</button>
+    <button class="btn btn-fn" onclick="fn('Math.PI')">π</button>
+  </div>
+
+  <!-- Potencias y raíces -->
+  <div class="section-label">Potencias y raíces</div>
+  <div class="grid g5">
+    <button class="btn btn-fn" onclick="fn('^')">xʸ</button>
+    <button class="btn btn-fn" onclick="fn('sqrt(')">√x</button>
+    <button class="btn btn-fn" onclick="fn('cbrt(')">∛x</button>
+    <button class="btn btn-fn" onclick="fn('nroot(')">ʸ√x</button>
+    <button class="btn btn-fn" onclick="fn('inv(')">1/x</button>
+  </div>
+
+  <!-- Logaritmos y combinatoria -->
+  <div class="section-label">Logaritmos · Combinatoria</div>
+  <div class="grid g5">
+    <button class="btn btn-fn" onclick="fn('log(')">log</button>
+    <button class="btn btn-fn" onclick="fn('ln(')">ln</button>
+    <button class="btn btn-fn" onclick="fn('Math.E')">e</button>
+    <button class="btn btn-fn" onclick="fn('fact(')">n!</button>
+    <button class="btn btn-fn" onclick="fn('abs(')">|x|</button>
+    <button class="btn btn-fn" onclick="fn('perm(')">nPr</button>
+    <button class="btn btn-fn" onclick="fn('comb(')">nCr</button>
+    <button class="btn btn-fn" onclick="fn('(')">( </button>
+    <button class="btn btn-fn" onclick="fn(')')"> )</button>
+    <button class="btn btn-fn" onclick="fn('%')">%</button>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Fila AC/borrar/operadores -->
+  <div class="grid g4">
+    <button class="btn btn-clr" onclick="allClear()">AC</button>
+    <button class="btn btn-op" onclick="del()">⌫</button>
+    <button class="btn btn-fn" onclick="fn('+/-')">+/−</button>
+    <button class="btn btn-op" onclick="fn('/')">÷</button>
+  </div>
+
+  <!-- Números -->
+  <div class="grid g4">
+    <button class="btn" onclick="fn('7')">7</button>
+    <button class="btn" onclick="fn('8')">8</button>
+    <button class="btn" onclick="fn('9')">9</button>
+    <button class="btn btn-op" onclick="fn('*')">×</button>
+    <button class="btn" onclick="fn('4')">4</button>
+    <button class="btn" onclick="fn('5')">5</button>
+    <button class="btn" onclick="fn('6')">6</button>
+    <button class="btn btn-op" onclick="fn('-')">−</button>
+    <button class="btn" onclick="fn('1')">1</button>
+    <button class="btn" onclick="fn('2')">2</button>
+    <button class="btn" onclick="fn('3')">3</button>
+    <button class="btn btn-op" onclick="fn('+')">+</button>
+    <button class="btn btn-fn" onclick="fn('EE(')">EE</button>
+    <button class="btn" onclick="fn('0')">0</button>
+    <button class="btn" onclick="fn('.')">.</button>
+    <button class="btn btn-eq" onclick="calc()">=</button>
+  </div>
+
+  <!-- Ayuda rápida -->
+  <div style="margin-top:10px;font-size:10px;color:#bbb;text-align:center;line-height:1.6">
+    ʸ√x → escribe y primero, luego ʸ√x &nbsp;|&nbsp; nPr / nCr → escribe n primero, luego nPr o nCr
+  </div>
+</div>
+
+<script>
+  let expr = '';
+  const exprEl = document.getElementById('expr');
+  const resultEl = document.getElementById('result');
+
+  // ── Funciones matemáticas ──────────────────────────────────────────────────
+  function fact(n) {
+    if (n < 0 || !Number.isInteger(n)) return NaN;
+    if (n === 0 || n === 1) return 1;
+    let r = 1; for (let i = 2; i <= n; i++) r *= i; return r;
+  }
+  function perm(n, r) {
+    if (!Number.isInteger(n) || !Number.isInteger(r) || r > n || n < 0 || r < 0) return NaN;
+    return fact(n) / fact(n - r);
+  }
+  function comb(n, r) {
+    if (!Number.isInteger(n) || !Number.isInteger(r) || r > n || n < 0 || r < 0) return NaN;
+    return fact(n) / (fact(r) * fact(n - r));
+  }
+  function nroot(y, x) { return Math.pow(x, 1 / y); }
+  function inv(x)  { return 1 / x; }
+  function EE(n)   { return Math.pow(10, n); }
+
+  // ── Input ──────────────────────────────────────────────────────────────────
+  function fn(v) {
+    if (v === '+/-') {
+      if (expr === '') return;
+      const m = expr.match(/(-?\d+\.?\d*)$/);
+      if (m) {
+        const num = m[1];
+        expr = expr.slice(0, -num.length) + (num.startsWith('-') ? num.slice(1) : '-' + num);
+      }
+    } else {
+      expr += v;
+    }
+    exprEl.textContent = display(expr);
+    resultEl.textContent = liveEval(expr);
+  }
+
+  // ── Display ────────────────────────────────────────────────────────────────
+  function display(e) {
+    return e
+      .replace(/Math\.PI/g, 'π').replace(/Math\.E/g, 'e')
+      .replace(/\*/g, '×').replace(/\//g, '÷')
+      .replace(/sqrt\(/g, '√(').replace(/cbrt\(/g, '∛(')
+      .replace(/nroot\(/g, 'ʸ√(').replace(/inv\(/g, '1/(')
+      .replace(/fact\(/g, 'n!(').replace(/perm\(/g, 'nPr(')
+      .replace(/comb\(/g, 'nCr(').replace(/abs\(/g, '|')
+      .replace(/log\(/g, 'log(').replace(/ln\(/g, 'ln(')
+      .replace(/sinh\(/g, 'sinh(').replace(/cosh\(/g, 'cosh(').replace(/tanh\(/g, 'tanh(')
+      .replace(/asin\(/g, 'sin⁻¹(').replace(/acos\(/g, 'cos⁻¹(').replace(/atan\(/g, 'tan⁻¹(')
+      .replace(/EE\(/g, '×10^(').replace(/\^/g, '^');
+  }
+
+  // ── Evaluación ────────────────────────────────────────────────────────────
+  function safeEval(e) {
+    let s = e;
+    s = s.replace(/\^/g, '**');
+    s = s.replace(/(?<![a-z])sin\(/gi, 'Math.sin(')
+         .replace(/(?<![a-z])cos\(/gi, 'Math.cos(')
+         .replace(/(?<![a-z])tan\(/gi, 'Math.tan(');
+    s = s.replace(/asin\(/g, 'Math.asin(')
+         .replace(/acos\(/g, 'Math.acos(')
+         .replace(/atan\(/g, 'Math.atan(');
+    s = s.replace(/sinh\(/g, 'Math.sinh(')
+         .replace(/cosh\(/g, 'Math.cosh(')
+         .replace(/tanh\(/g, 'Math.tanh(');
+    s = s.replace(/sqrt\(/g, 'Math.sqrt(')
+         .replace(/cbrt\(/g, 'Math.cbrt(')
+         .replace(/log\(/g, 'Math.log10(')
+         .replace(/ln\(/g, 'Math.log(')
+         .replace(/abs\(/g, 'Math.abs(');
+    s = s.replace(/fact\(/g, 'fact(')
+         .replace(/perm\(/g, 'perm(')
+         .replace(/comb\(/g, 'comb(')
+         .replace(/nroot\(/g, 'nroot(')
+         .replace(/inv\(/g, 'inv(')
+         .replace(/EE\(/g, 'EE(');
+    const helpers = [fact, perm, comb, nroot, inv, EE].map(f => `const ${f.name}=${f.toString()};`).join('');
+    return Function(`"use strict";${helpers}return (${s})`)();
+  }
+
+  function liveEval(e) {
+    try {
+      const r = safeEval(e);
+      if (r === undefined || r === null || isNaN(r)) return '';
+      return fmt(r);
+    } catch(ex) { return ''; }
+  }
+
+  function calc() {
+    try {
+      const r = safeEval(expr);
+      exprEl.textContent = display(expr) + ' =';
+      resultEl.textContent = fmt(r);
+      expr = String(r);
+    } catch(ex) {
+      resultEl.textContent = 'Error';
+      expr = '';
+    }
+  }
+
+  function fmt(n) {
+    if (!isFinite(n)) return n > 0 ? '∞' : '-∞';
+    if (Math.abs(n) >= 1e12 || (Math.abs(n) < 1e-7 && n !== 0)) return n.toExponential(6);
+    return String(parseFloat(n.toPrecision(12)));
+  }
+
+  function allClear() { expr = ''; exprEl.textContent = ''; resultEl.textContent = '0'; }
+  function del() {
+    expr = expr.slice(0, -1);
+    exprEl.textContent = display(expr);
+    resultEl.textContent = liveEval(expr) || '0';
+  }
+</script>
+</body>
+</html>
